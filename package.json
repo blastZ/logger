@@ -1,0 +1,21 @@
+{
+  "name": "@blastz/nico-logger",
+  "version": "0.1.0",
+  "description": "nodejs logger",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "blastz",
+  "license": "MIT",
+  "dependencies": {
+    "@types/node": "^15.0.3",
+    "chalk": "^4.1.1",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.23",
+    "jest": "^26.6.3"
+  }
+}
