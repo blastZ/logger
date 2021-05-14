@@ -6,7 +6,7 @@
   "scripts": {
     "tsc": "tsc",
     "test": "jest",
-    "publish": "npm run tsc && npm test && npm publish --access public --registry=https://registry.npmjs.org"
+    "push": "npm run tsc && npm test && npm publish --access public --registry=https://registry.npmjs.org"
   },
   "author": "blastz",
   "license": "MIT",
