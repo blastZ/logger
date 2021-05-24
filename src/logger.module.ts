@@ -189,3 +189,15 @@ export class NicoLogger {
     return this.logger;
   };
 }
+
+let nicoLogger = new NicoLogger();
+
+export function initLogger(options: LoggerOptions) {
+  nicoLogger.setLogger(options);
+}
+
+function getLogger() {
+  return nicoLogger.getLogger();
+}
+
+export const logger = getLogger();

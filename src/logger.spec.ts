@@ -1,4 +1,4 @@
-import { NicoLogger } from "./index";
+import { initLogger, logger, NicoLogger } from "./index";
 import { LoggerLevel } from "./logger.enum";
 
 test("Console transport", async () => {
@@ -65,4 +65,13 @@ test("Disable json format", async () => {
   }).getLogger();
 
   logger.info("test");
+});
+
+test("Default logger", () => {
+  logger.trace("test default logger before init");
+  logger.info("test default logger");
+
+  initLogger({ consoleLevel: LoggerLevel.Trace });
+
+  logger.trace("test default logger after init");
 });
