@@ -53,3 +53,16 @@ test("Child logger", async () => {
 
   childLogger.info("child logger");
 });
+
+test("Disable json format", async () => {
+  const logger = new NicoLogger({
+    consoleLevel: "none",
+    fileLevel: {
+      level: LoggerLevel.Trace,
+      disableJsonFormat: true,
+      filename: "disable-json-format-%DATE%.log",
+    },
+  }).getLogger();
+
+  logger.info("test");
+});

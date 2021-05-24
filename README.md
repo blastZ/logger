@@ -68,6 +68,8 @@ File transport will log with json format
 {"message":"trace","level":"trace","hostname":"OMEN","pid":762,"timestamp":"2021-05-14T06:51:59.894Z"}
 ```
 
+Set `{ disableJsonFormat: true }` to keep raw logger output.
+
 All options in [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file) are supported by `fileLevel` options.
 
 ### Multiple file transport

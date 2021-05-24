@@ -4,6 +4,8 @@ import { LoggerLevel } from "./logger.enum";
 
 export interface FileTransportOptions {
   level?: LoggerLevel;
+  disableJsonFormat?: boolean;
+
   datePattern?: string;
   zippedArchive?: boolean;
   filename?: string;

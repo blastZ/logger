@@ -88,7 +88,11 @@ export class NicoLogger {
     return format.combine(levelFormat(), format.timestamp(), outputFormat);
   }
 
-  private createFileFormat() {
+  private createFileFormat(disableJsonFormat = false) {
+    if (disableJsonFormat) {
+      return this.createConsoleFormat();
+    }
+
     return format.combine(format.timestamp(), format.json());
   }
 
@@ -107,9 +111,9 @@ export class NicoLogger {
   }
 
   private mountFileTransport(fileLevel: FileLevel) {
-    const fileFormat = this.createFileFormat();
-
     if (typeof fileLevel === "string") {
+      const fileFormat = this.createFileFormat();
+
       this.logger.add(
         new transports.DailyRotateFile({
           ...this.defaultFileTransportOptions,
@@ -122,6 +126,8 @@ export class NicoLogger {
     }
 
     if (typeof fileLevel === "object") {
+      const fileFormat = this.createFileFormat(fileLevel.disableJsonFormat);
+
       if (!fileLevel.stream && !fileLevel.filename) {
         fileLevel.filename = "%DATE%.log";
       }
