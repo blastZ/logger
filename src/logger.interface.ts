@@ -32,4 +32,5 @@ export interface LoggerOptions {
 export interface Logger extends WinstonLogger {
   fatal: LeveledLogMethod;
   trace: LeveledLogMethod;
+  child: (options: Object) => Logger;
 }
