@@ -1,3 +1,4 @@
+import { AsyncLocalStorage } from "async_hooks";
 import { Logger as WinstonLogger, LeveledLogMethod } from "winston";
 
 import { LoggerLevel } from "./logger.enum";
@@ -27,6 +28,7 @@ export type FileLevel = LoggerLevel | FileTransportOptions;
 export interface LoggerOptions {
   consoleLevel?: LoggerLevel | "none";
   fileLevel?: FileLevel | FileLevel[] | "none";
+  store?: AsyncLocalStorage<unknown>;
 }
 
 export interface Logger extends WinstonLogger {

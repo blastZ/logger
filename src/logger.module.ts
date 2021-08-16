@@ -6,8 +6,9 @@ import { hostname } from "os";
 
 import { LoggerLevel } from "./logger.enum";
 import { FileLevel, Logger, LoggerOptions } from "./logger.interface";
+import { AsyncLocalStorage } from "async_hooks";
 
-export class NicoLogger {
+export class LoggerFactory {
   private logger: Logger;
 
   private levels = {
@@ -30,7 +31,16 @@ export class NicoLogger {
 
   constructor(options: LoggerOptions = {}) {
     this.logger = this.createDefaultLogger();
+
     this.setLogger(options);
+  }
+
+  private createTraceIdFormat(store: AsyncLocalStorage<unknown>) {
+    return format((info) => {
+      info.traceId = store.getStore();
+
+      return info;
+    })();
   }
 
   private createConsoleFormat() {
@@ -110,9 +120,15 @@ export class NicoLogger {
     return logger;
   }
 
-  private mountFileTransport(fileLevel: FileLevel) {
+  private mountFileTransport(
+    fileLevel: FileLevel,
+    store?: AsyncLocalStorage<unknown>
+  ) {
     if (typeof fileLevel === "string") {
       const fileFormat = this.createFileFormat();
+      const loggerFormat = store
+        ? format.combine(this.createTraceIdFormat(store), fileFormat)
+        : fileFormat;
 
       this.logger.add(
         new transports.DailyRotateFile({
@@ -120,13 +136,16 @@ export class NicoLogger {
           filename: "%DATE%.log",
           dirname: `./log/${fileLevel}`,
           level: fileLevel,
-          format: fileFormat,
+          format: loggerFormat,
         })
       );
     }
 
     if (typeof fileLevel === "object") {
       const fileFormat = this.createFileFormat(fileLevel.disableJsonFormat);
+      const loggerFormat = store
+        ? format.combine(this.createTraceIdFormat(store), fileFormat)
+        : fileFormat;
 
       if (!fileLevel.stream && !fileLevel.filename) {
         fileLevel.filename = "%DATE%.log";
@@ -141,7 +160,7 @@ export class NicoLogger {
         new transports.DailyRotateFile({
           ...this.defaultFileTransportOptions,
           ...fileLevel,
-          format: fileFormat,
+          format: loggerFormat,
         })
       );
     }
@@ -154,7 +173,11 @@ export class NicoLogger {
   setLogger = (options: LoggerOptions = {}) => {
     this.logger.clear();
 
-    const { consoleLevel = LoggerLevel.Info, fileLevel = "none" } = options;
+    const {
+      consoleLevel = LoggerLevel.Info,
+      fileLevel = "none",
+      store,
+    } = options;
 
     if (consoleLevel === "none" && fileLevel === "none") {
       this.logger.configure({
@@ -168,10 +191,17 @@ export class NicoLogger {
       consoleLevel !== "none" &&
       Object.keys(this.levels).includes(consoleLevel)
     ) {
+      const consoleFormat = this.createConsoleFormat();
+
       this.logger.add(
         new transports.Console({
           level: consoleLevel,
-          format: this.createConsoleFormat(),
+          format: store
+            ? format.combine(
+                this.createTraceIdFormat(store),
+                this.createConsoleFormat()
+              )
+            : consoleFormat,
         })
       );
     }
@@ -179,10 +209,10 @@ export class NicoLogger {
     if (fileLevel !== "none") {
       if (Array.isArray(fileLevel)) {
         fileLevel.forEach((o) => {
-          this.mountFileTransport(o);
+          this.mountFileTransport(o, store);
         });
       } else {
-        this.mountFileTransport(fileLevel);
+        this.mountFileTransport(fileLevel, store);
       }
     }
 
@@ -190,14 +220,14 @@ export class NicoLogger {
   };
 }
 
-let nicoLogger = new NicoLogger();
+const loggerFactory = new LoggerFactory();
 
 export function initLogger(options: LoggerOptions) {
-  nicoLogger.setLogger(options);
+  loggerFactory.setLogger(options);
 }
 
 function getLogger() {
-  return nicoLogger.getLogger();
+  return loggerFactory.getLogger();
 }
 
 export const logger = getLogger();

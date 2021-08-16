@@ -1,11 +1,25 @@
-# Nico Logger
+# Logger
 
 Node.js logger based on [winston](https://github.com/winstonjs/winston).
 
 ## Install
 
 ```bash
-$ npm install @blastz/nico-logger
+$ npm install @blastz/logger
+```
+
+## Usage
+
+The recommended way to use `logger` is initialize it by `initLogger` then use `logger` directly.
+
+```ts
+import { initLogger, LoggerLevel, logger } from "@blastz/logger";
+
+initLogger({
+  consoleLevel: LoggerLevel.Trace,
+});
+
+logger.trace("hello world!");
 ```
 
 ## Logging levels
@@ -28,9 +42,9 @@ const levels = {
 Set `consoleLevel` to enable console transport
 
 ```ts
-import { NicoLogger, LoggerLevel } from "@blastz/nico-logger";
+import { LoggerFactory, LoggerLevel } from "@blastz/logger";
 
-const logger = new NicoLogger({
+const logger = new LoggerFactory({
   consoleLevel: LoggerLevel.Debug,
 }).getLogger();
 
@@ -53,9 +67,9 @@ Console transport will output logs with such format
 Set `fileLevel` to enable file transport
 
 ```ts
-import { NicoLogger, LoggerLevel } from "@blastz/nico-logger";
+import { LoggerFactory, LoggerLevel } from "@blastz/logger";
 
-const logger = new NicoLogger({
+const logger = new LoggerFactory({
   fileLevel: LoggerLevel.Trace,
 }).getLogger();
 
@@ -77,9 +91,9 @@ All options in [winston-daily-rotate-file](https://github.com/winstonjs/winston-
 Set multiple levels file logging is supported.
 
 ```ts
-import { NicoLogger, LoggerLevel } from "@blastz/nico-logger";
+import { LoggerFactory, LoggerLevel } from "@blastz/logger";
 
-const logger = new NicoLogger({
+const logger = new LoggerFactory({
   fileLevel: [LoggerLevel.Trace, LoggerLevel.Error],
 }).getLogger();
 
@@ -93,6 +107,31 @@ It will create two folds `error` and `trace`
   - trace
 
 The error fold will only include loggin files that logging level is above `error`.
+
+## Enable trace id
+
+To enable trace id, pass `AsyncLocalStorage` in the options.
+
+```ts
+import { AsyncLocalStorage } from "async_hooks";
+import { v4 as uuidv4 } from "uuid";
+import { LoggerFactory, LoggerLevel } from "@blastz/logger";
+
+const store = new AsyncLocalStorage();
+
+const logger = new LoggerFactory({
+  consoleLevel: LoggerLevel.Trace,
+  store,
+}).getLogger();
+
+const traceId = new uuidv4();
+
+store.run(traceId, () => {
+  logger.debug("test");
+});
+```
+
+The console ouput will include `traceId` property.
 
 ## License
 
