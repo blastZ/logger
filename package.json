@@ -1,6 +1,6 @@
 {
   "name": "@blastz/logger",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "nodejs logger",
   "main": "dist/index.js",
   "scripts": {
@@ -8,6 +8,16 @@
     "test": "jest",
     "push": "npm run tsc && npm test && npm publish --access public --registry=https://registry.npmjs.org"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blastZ/logger.git"
+  },
+  "keywords": [
+    "logger",
+    "trace",
+    "debug",
+    "log"
+  ],
   "author": "blastz",
   "license": "MIT",
   "dependencies": {
