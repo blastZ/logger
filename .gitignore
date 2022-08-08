@@ -15,6 +15,7 @@ dist
 /app.js
 /log
 /app
+/.env
 
 # Miscellaneous
 *~
