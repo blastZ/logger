@@ -10,16 +10,12 @@ $ npm install @blastz/logger
 
 ## Usage
 
-The recommended way to use `logger` is initialize it by `initLogger` then use `logger` directly.
-
 ```ts
-import { initLogger, LoggerLevel, logger } from "@blastz/logger";
+import { logger, LoggerLevel, createConsoleTransport } from "@blastz/logger";
 
-initLogger({
-  consoleLevel: LoggerLevel.Trace,
-});
+logger.clear().add(createConsoleTransport());
 
-logger.trace("hello world!");
+logger.info("hello world!");
 ```
 
 ## Logging levels
@@ -39,17 +35,7 @@ const levels = {
 
 ## Consle transport
 
-Set `consoleLevel` to enable console transport
-
-```ts
-import { LoggerFactory, LoggerLevel } from "@blastz/logger";
-
-const logger = new LoggerFactory({
-  consoleLevel: LoggerLevel.Debug,
-}).getLogger();
-
-logger.debug("test");
-```
+Call `createConsoleTransport` method to create console transport.
 
 Console transport will output logs with such format
 
@@ -64,40 +50,13 @@ Console transport will output logs with such format
 
 ## File transport
 
-Set `fileLevel` to enable file transport
+Call `createFileTransport` to create file transport
 
 ```ts
-import { LoggerFactory, LoggerLevel } from "@blastz/logger";
-
-const logger = new LoggerFactory({
-  fileLevel: LoggerLevel.Trace,
-}).getLogger();
-
-logger.debug("test");
-```
-
-File transport will log with json format
-
-```bash
-{"message":"trace","level":"trace","hostname":"OMEN","pid":762,"timestamp":"2021-05-14T06:51:59.894Z"}
-```
-
-Set `{ disableJsonFormat: true }` to keep raw logger output.
-
-All options in [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file) are supported by `fileLevel` options.
-
-### Multiple file transport
-
-Set multiple levels file logging is supported.
-
-```ts
-import { LoggerFactory, LoggerLevel } from "@blastz/logger";
-
-const logger = new LoggerFactory({
-  fileLevel: [LoggerLevel.Trace, LoggerLevel.Error],
-}).getLogger();
-
-logger.debug("test");
+logger
+  .clear()
+  .add(createFileTransport({ level: LoggerLevel.Trace }))
+  .add(createFileTransport({ level: LoggerLevel.Error }));
 ```
 
 It will create two folds `error` and `trace`
@@ -106,32 +65,36 @@ It will create two folds `error` and `trace`
   - error
   - trace
 
-The error fold will only include loggin files that logging level is above `error`.
+The error fold will include loggin files that logging level is above `error`, and trace fold
+will include loggin files above `trace`.
 
-## Enable trace id
+File transport will log with json format
+
+```bash
+{"message":"trace","level":"trace","hostname":"OMEN","pid":762,"timestamp":"2021-05-14T06:51:59.894Z"}
+```
+
+All options in [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file) are supported by function options.
+
+## Add trace id
 
 To enable trace id, pass `AsyncLocalStorage` in the options.
 
 ```ts
-import { AsyncLocalStorage } from "async_hooks";
-import { v4 as uuidv4 } from "uuid";
-import { LoggerFactory, LoggerLevel } from "@blastz/logger";
+const store = new AsyncLocalStorage<string>();
 
-const store = new AsyncLocalStorage();
+logger.clear().add(createConsoleTransport({ traceIdStore: store }));
 
-const logger = new LoggerFactory({
-  consoleLevel: LoggerLevel.Trace,
-  store,
-}).getLogger();
-
-const traceId = new uuidv4();
-
-store.run(traceId, () => {
-  logger.debug("test");
+store.run("xxx", () => {
+  logger.info("test");
 });
 ```
 
 The console ouput will include `traceId` property.
+
+## Options
+
+Check all transport options in the `src/interfaces/${transportName}.interface.ts`
 
 ## License
 
