@@ -33,7 +33,7 @@ const levels = {
 };
 ```
 
-## Consle transport
+## Console transport
 
 Call `createConsoleTransport` method to create console transport.
 
