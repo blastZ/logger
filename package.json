@@ -1,8 +1,8 @@
 {
   "name": "@blastz/logger",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "nodejs logger",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "tsc": "tsc",
     "test": "jest",

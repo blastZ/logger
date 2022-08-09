@@ -1,29 +1,16 @@
 import { SLS } from "aliyun-sdk";
 import { MESSAGE } from "triple-beam";
 import { format } from "winston";
-import Transport, { TransportStreamOptions } from "winston-transport";
+import Transport from "winston-transport";
 
 import { createJsonFormat, createTimestampFormat } from "../formats";
-
-interface Options extends TransportStreamOptions {
-  accessKeyId: string;
-  secretAccessKey: string;
-  endpoint: string;
-  apiVersion: string;
-  projectName: string;
-  logStoreName: string;
-  topic?: string;
-  source?: string;
-  httpOptions?: {
-    timeout: number; // default no timeout (ms)
-  };
-}
+import { SlsLogTransportOptions } from "../interfaces";
 
 class SlsLogTransport extends Transport {
   private client: SLS;
-  private options: Options;
+  private options: SlsLogTransportOptions;
 
-  constructor(opts: Options) {
+  constructor(opts: SlsLogTransportOptions) {
     super(opts);
 
     this.options = opts;
@@ -66,7 +53,7 @@ class SlsLogTransport extends Transport {
   }
 }
 
-export function createSlsLogTransport(opts: Options) {
+export function createSlsLogTransport(opts: SlsLogTransportOptions) {
   return new SlsLogTransport({
     format: format.combine(createTimestampFormat(), createJsonFormat()),
     ...opts,
