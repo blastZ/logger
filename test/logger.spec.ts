@@ -51,7 +51,7 @@ describe("logger", () => {
   it("should work with child logger", () => {
     logger.clear().add(createConsoleTransport());
 
-    logger.child({ stage: "test" }).info("test");
+    logger.child({ stage: "test" }).trace("test");
   });
 
   it("should work with trace id store", () => {
