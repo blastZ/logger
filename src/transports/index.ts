@@ -1,3 +1,3 @@
-export * from "./console.transport";
-export * from "./file.transport";
-export * from "./sls-log.transport";
+export * from "./console.transport.js";
+export * from "./file.transport.js";
+export * from "./sls-log.transport.js";

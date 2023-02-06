@@ -1,7 +1,6 @@
-import { AsyncLocalStorage } from "async_hooks";
-import { LoggerLevel } from "../enums";
+import { LoggerLevel } from "../enums/index.js";
+import { BaseOptions } from "./base-options.interface.js";
 
-export interface ConsoleTransportOptions {
+export interface ConsoleTransportOptions extends BaseOptions {
   level?: LoggerLevel; // info
-  traceIdStore?: AsyncLocalStorage<string>;
 }

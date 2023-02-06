@@ -1,20 +1,23 @@
-import { SLS } from "aliyun-sdk";
+import $SDK from "aliyun-sdk";
 import { MESSAGE } from "triple-beam";
 import { format } from "winston";
-import Transport from "winston-transport";
-
-import { createJsonFormat, createTimestampFormat } from "../formats";
-import { SlsLogTransportOptions } from "../interfaces";
+import Transport, { TransportStreamOptions } from "winston-transport";
+import {
+  createJsonFormat,
+  createStoreFormat,
+  createTimestampFormat,
+} from "../formats/index.js";
+import { SlsLogTransportOptions } from "../interfaces/index.js";
 
 class SlsLogTransport extends Transport {
-  private client: SLS;
+  private client: $SDK.SLS;
   private options: SlsLogTransportOptions;
 
-  constructor(opts: SlsLogTransportOptions) {
+  constructor(opts: SlsLogTransportOptions & TransportStreamOptions) {
     super(opts);
 
     this.options = opts;
-    this.client = new SLS(opts);
+    this.client = new $SDK.SLS(opts);
   }
 
   log(info: any, next: () => void) {
@@ -54,8 +57,14 @@ class SlsLogTransport extends Transport {
 }
 
 export function createSlsLogTransport(opts: SlsLogTransportOptions) {
+  const formats = [createTimestampFormat(), createJsonFormat()];
+
+  if (opts.store) {
+    formats.unshift(createStoreFormat(opts.store));
+  }
+
   return new SlsLogTransport({
-    format: format.combine(createTimestampFormat(), createJsonFormat()),
+    format: format.combine(...formats),
     ...opts,
   });
 }

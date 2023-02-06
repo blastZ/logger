@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -10,7 +10,7 @@ import {
   createSlsLogTransport,
   logger,
   LoggerLevel,
-} from "../src";
+} from "../src/index.js";
 
 describe("logger", () => {
   it("should work with console transport", () => {
@@ -54,12 +54,12 @@ describe("logger", () => {
     logger.child({ stage: "test" }).trace("test");
   });
 
-  it("should work with trace id store", () => {
-    const store = new AsyncLocalStorage<string>();
+  it("should work with store", () => {
+    const store = new AsyncLocalStorage<Record<string, unknown>>();
 
-    logger.clear().add(createConsoleTransport({ traceIdStore: store }));
+    logger.clear().add(createConsoleTransport({ store }));
 
-    store.run("xxx", () => {
+    store.run({ requestId: "xxx", project: "haha" }, () => {
       logger.info("test");
     });
   });
@@ -70,7 +70,7 @@ describe("logger", () => {
       .add(createConsoleTransport({ level: LoggerLevel.Trace }))
       .add(
         createSlsLogTransport({
-          level: "trace",
+          level: LoggerLevel.Trace,
           endpoint: process.env.SLS_LOG_ENDPOINT!,
           accessKeyId: process.env.SLS_LOG_KEY!,
           secretAccessKey: process.env.SLS_LOG_SECRET!,

@@ -1,6 +1,6 @@
-import { TransportStreamOptions } from "winston-transport";
+import { BaseOptions } from "./base-options.interface.js";
 
-export interface SlsLogTransportOptions extends TransportStreamOptions {
+export interface SlsLogTransportOptions extends BaseOptions {
   accessKeyId: string;
   secretAccessKey: string;
   endpoint: string;

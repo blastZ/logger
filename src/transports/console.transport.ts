@@ -1,13 +1,13 @@
 import { format, transports } from "winston";
-import { LoggerLevel } from "../enums";
+import { LoggerLevel } from "../enums/index.js";
 
 import {
   createLevelFormat,
   createMessageFormat,
+  createStoreFormat,
   createTimestampFormat,
-  createTraceIdFormat,
-} from "../formats";
-import { ConsoleTransportOptions } from "../interfaces";
+} from "../formats/index.js";
+import { ConsoleTransportOptions } from "../interfaces/index.js";
 
 export function createConsoleTransport(options: ConsoleTransportOptions = {}) {
   const formats = [
@@ -16,8 +16,8 @@ export function createConsoleTransport(options: ConsoleTransportOptions = {}) {
     createMessageFormat(),
   ];
 
-  if (options.traceIdStore) {
-    formats.unshift(createTraceIdFormat(options.traceIdStore));
+  if (options.store) {
+    formats.unshift(createStoreFormat(options.store));
   }
 
   return new transports.Console({

@@ -1,11 +1,11 @@
-import { AsyncLocalStorage } from "async_hooks";
 import { GeneralDailyRotateFileTransportOptions } from "winston-daily-rotate-file";
 
-import { LoggerLevel } from "../enums";
+import { LoggerLevel } from "../enums/index.js";
+import { BaseOptions } from "./base-options.interface.js";
 
 export interface FileTransportOptions
-  extends GeneralDailyRotateFileTransportOptions {
+  extends BaseOptions,
+    GeneralDailyRotateFileTransportOptions {
   level?: LoggerLevel; // trace
   jsonOutput?: boolean; // true
-  traceIdStore?: AsyncLocalStorage<string>;
 }
