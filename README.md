@@ -76,16 +76,16 @@ File transport will log with json format
 
 All options in [winston-daily-rotate-file](https://github.com/winstonjs/winston-daily-rotate-file) are supported by function options.
 
-## Add trace id
+## Custom metadatas
 
-To enable trace id, pass `AsyncLocalStorage` in the options.
+When you need some custom metadatas, like trace id. you can pass `AsyncLocalStorage` in the options.
 
 ```ts
-const store = new AsyncLocalStorage<string>();
+const store = new AsyncLocalStorage<Record<string, unknown>>();
 
-logger.clear().add(createConsoleTransport({ traceIdStore: store }));
+logger.clear().add(createConsoleTransport({ store }));
 
-store.run("xxx", () => {
+store.run({ traceId: "xxx" }, () => {
   logger.info("test");
 });
 ```
