@@ -78,12 +78,14 @@ All options in [winston-daily-rotate-file](https://github.com/winstonjs/winston-
 
 ## Custom metadatas
 
-When you need some custom metadatas, like trace id. you can pass `AsyncLocalStorage` in the options.
+When you need some custom metadatas, like trace id. you can pass `AsyncLocalStorage` to the logger `context`.
 
 ```ts
-const store = new AsyncLocalStorage<Record<string, unknown>>();
+const context = new AsyncLocalStorage<Record<string, unknown>>();
 
-logger.clear().add(createConsoleTransport({ store }));
+logger.context = context;
+
+logger.clear().add(createConsoleTransport());
 
 store.run({ traceId: "xxx" }, () => {
   logger.info("test");

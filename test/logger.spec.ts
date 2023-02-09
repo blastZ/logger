@@ -54,13 +54,13 @@ describe("logger", () => {
     logger.child({ stage: "test" }).trace("test");
   });
 
-  it("should work with store", () => {
-    const store = new AsyncLocalStorage<Record<string, unknown>>();
+  it("should work with context", () => {
+    const context = new AsyncLocalStorage<Record<string, unknown>>();
 
-    logger.clear().add(createConsoleTransport({ store }));
+    logger.context = context;
 
-    store.run({ requestId: "xxx", project: "haha" }, () => {
-      logger.info("test");
+    context.run({ requestId: "xxx" }, () => {
+      logger.info("test context");
     });
   });
 

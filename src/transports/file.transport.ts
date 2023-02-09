@@ -6,7 +6,6 @@ import {
   createJsonFormat,
   createLevelFormat,
   createMessageFormat,
-  createStoreFormat,
   createTimestampFormat,
 } from "../formats/index.js";
 import { FileTransportOptions } from "../interfaces/index.js";
@@ -16,10 +15,6 @@ export function createFileTransport(options: FileTransportOptions = {}) {
     options.jsonOutput === false
       ? [createLevelFormat(), createTimestampFormat(), createMessageFormat()]
       : [createTimestampFormat(), createJsonFormat()];
-
-  if (options.store) {
-    formats.unshift(createStoreFormat(options.store));
-  }
 
   return new transports.DailyRotateFile({
     level: LoggerLevel.Trace,

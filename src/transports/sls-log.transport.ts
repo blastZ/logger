@@ -2,11 +2,7 @@ import $SDK from "aliyun-sdk";
 import { MESSAGE } from "triple-beam";
 import { format } from "winston";
 import Transport, { TransportStreamOptions } from "winston-transport";
-import {
-  createJsonFormat,
-  createStoreFormat,
-  createTimestampFormat,
-} from "../formats/index.js";
+import { createJsonFormat, createTimestampFormat } from "../formats/index.js";
 import { SlsLogTransportOptions } from "../interfaces/index.js";
 
 class SlsLogTransport extends Transport {
@@ -58,10 +54,6 @@ class SlsLogTransport extends Transport {
 
 export function createSlsLogTransport(opts: SlsLogTransportOptions) {
   const formats = [createTimestampFormat(), createJsonFormat()];
-
-  if (opts.store) {
-    formats.unshift(createStoreFormat(opts.store));
-  }
 
   return new SlsLogTransport({
     format: format.combine(...formats),

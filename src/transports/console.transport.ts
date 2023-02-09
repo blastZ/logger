@@ -4,7 +4,6 @@ import { LoggerLevel } from "../enums/index.js";
 import {
   createLevelFormat,
   createMessageFormat,
-  createStoreFormat,
   createTimestampFormat,
 } from "../formats/index.js";
 import { ConsoleTransportOptions } from "../interfaces/index.js";
@@ -15,10 +14,6 @@ export function createConsoleTransport(options: ConsoleTransportOptions = {}) {
     createTimestampFormat(),
     createMessageFormat(),
   ];
-
-  if (options.store) {
-    formats.unshift(createStoreFormat(options.store));
-  }
 
   return new transports.Console({
     level: options.level || LoggerLevel.Info,
